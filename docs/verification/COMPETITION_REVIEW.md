@@ -13,3 +13,7 @@ Remote clone and branch listing confirmed an empty repository. GitHub returned 4
 ## P2 — Contracts and replay
 
 Ruff and 30 pytest cases passed on Python 3.11.18. The eight v1 synthetic cases replay deterministic timestamps, identifiers, hashes and severity labels. Case contracts reject dangling evidence links. Package metadata is generated at install time and excluded from the source release.
+
+## P3 — Agents and orchestration
+
+41 Python 3.11 tests and Ruff passed. The six deterministic roles exchange typed event, evidence and case records. Replay produces identical case reports. Stage failures give a redacted manual-review result and bounded read-only retries. Foundry execution is unverified and remains disabled. The elapsed-time budget is checked between synchronous local operations and after they return.
