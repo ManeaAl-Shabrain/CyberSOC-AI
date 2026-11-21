@@ -29,3 +29,9 @@ Ruff and 30 pytest cases passed on Python 3.11.18. The eight v1 synthetic cases 
 ## P6 — Dashboard and install
 
 50 tests passed, with 98.51% combined coverage. The integration load smoke test replayed 64 cases via eight worker threads and recorded 64 distinct trace IDs. A Chromium walkthrough verified desktop and 375-pixel mobile layouts, replay, timeline, trace expansion, evaluation, analyst and reviewer roles, simulation and audit. A clean Python 3.11 environment installed the built wheel and found its static UI and packaged fixtures. Docker hardware/runtime and Azure resources were unavailable, so container execution and cloud deployment are unverified.
+
+## P7 — Release review and delivery
+
+The final review checked trust boundaries, authorization and evidence references against the implemented design. Local dependency audit reported no known vulnerabilities in the queried advisory source at review time. A targeted credential-pattern scan found no matches in tracked source. The test stack emits a Starlette TestClient deprecation notice for httpx. Independent reviewer and organizer confirmation remain pending.
+
+The four-page architecture PDF contains a screenshot from the verified browser run. The H.264/AAC MP4 uses synthetic English narration and captured dashboard states. Both are delivered with the source archive and branch-preserving Git bundle. GitHub, Foundry and competition submission were not part of the verified local runtime.
