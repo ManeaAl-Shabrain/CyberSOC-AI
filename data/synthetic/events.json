@@ -1,0 +1,3 @@
+[
+  {"event_id":"EV-1001","timestamp":"2026-11-20T10:30:00Z","source":"Sysmon","event_type":"process_creation","asset_id":"WIN11-01","raw_data":{"process_name":"powershell.exe","parent_process":"WINWORD.EXE"},"simulation":true}
+]

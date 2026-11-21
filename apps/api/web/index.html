@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberSOC AI | Case workspace</title>
+  <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/dashboard.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to workspace</a>
+  <aside class="rail">
+    <div class="brand">
+      <img src="/assets/icon.svg" width="37" height="37" alt="">
+      <div><strong>CyberSOC AI</strong><small>Competition Edition</small></div>
+    </div>
+    <nav aria-label="Workspace sections">
+      <a href="#case">Case overview</a>
+      <a href="#timeline-section">Timeline &amp; evidence</a>
+      <a href="#trace-section">Agent traces</a>
+      <a href="#evaluation-section">Evaluation</a>
+      <a href="#approval-section">Approvals</a>
+    </nav>
+    <div class="mode"><span aria-hidden="true"></span> Synthetic data · Offline</div>
+  </aside>
+  <main id="workspace">
+    <header class="workspace-header">
+      <div><p class="eyebrow">SECURITY OPERATIONS</p><h1>Case workspace</h1></div>
+      <div class="replay">
+        <label for="scenario">Synthetic scenario</label>
+        <div><select id="scenario"></select><button id="run" type="button" disabled>Replay case</button></div>
+      </div>
+    </header>
+    <p id="status" class="status" role="status">Loading scenarios…</p>
+    <section id="case" class="case-card" aria-labelledby="case-name">
+      <div>
+        <p class="eyebrow">ANALYST TRIAGE</p>
+        <h2 id="case-name">Select a synthetic scenario</h2>
+        <p id="summary"></p>
+      </div>
+      <span id="severity" class="severity" hidden></span>
+    </section>
+    <div class="metrics" aria-label="Case metrics">
+      <div><span>Evidence records</span><strong id="evidence-count">—</strong></div>
+      <div><span>Agent stages</span><strong id="agent-count">—</strong></div>
+      <div><span>Workflow time</span><strong id="run-time">—</strong></div>
+    </div>
+    <div class="columns">
+      <section class="panel" aria-labelledby="findings-title">
+        <h2 id="findings-title">Evidence-linked findings</h2>
+        <div id="findings" class="stack"></div>
+      </section>
+      <section class="panel" aria-labelledby="next-title">
+        <h2 id="next-title">Analyst next steps</h2>
+        <ul id="recommendations"></ul>
+        <div class="note"><strong>Case limitations</strong><ul id="limitations"></ul></div>
+        <p class="meta" id="playbook"></p>
+      </section>
+    </div>
+    <section class="panel" id="timeline-section" aria-labelledby="timeline-title">
+      <h2 id="timeline-title">Timeline &amp; evidence</h2>
+      <div id="timeline" class="stack"></div>
+      <details><summary>Evidence identifiers and SHA-256 digests</summary><div id="evidence" class="stack"></div></details>
+    </section>
+    <section class="panel" id="trace-section" aria-labelledby="traces-title">
+      <h2 id="traces-title">Agent traces</h2>
+      <p id="trace-id" class="meta"></p>
+      <div id="traces" class="stack"></div>
+    </section>
+    <section class="panel" id="evaluation-section" aria-labelledby="evaluation-title">
+      <div class="section-head"><h2 id="evaluation-title">Synthetic evaluation</h2><button class="secondary" id="evaluate" type="button">Run evaluation</button></div>
+      <p id="eval-status" role="status">Run the labeled regression suite to see current results.</p>
+      <div id="evaluation-results" class="stack"></div>
+    </section>
+    <section class="panel" id="approval-section" aria-labelledby="approval-title">
+      <h2 id="approval-title">Simulated approval queue</h2>
+      <p>Enter the local analyst or reviewer token. A reviewer must approve a request before a simulation can be recorded.</p>
+      <label for="approval-token">Local role token</label>
+      <div class="approval-controls">
+        <input id="approval-token" type="password" autocomplete="off">
+        <button id="request-approval" type="button" disabled>Request simulation</button>
+        <button id="refresh-approvals" class="secondary" type="button">Load queue</button>
+        <button id="load-audit" class="secondary" type="button">Load audit</button>
+      </div>
+      <p id="approval-status" role="status"></p>
+      <div id="approval-list" class="stack"></div>
+    </section>
+  </main>
+</body>
+</html>
