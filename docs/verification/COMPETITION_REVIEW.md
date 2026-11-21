@@ -17,3 +17,7 @@ Ruff and 30 pytest cases passed on Python 3.11.18. The eight v1 synthetic cases 
 ## P3 — Agents and orchestration
 
 41 Python 3.11 tests and Ruff passed. The six deterministic roles exchange typed event, evidence and case records. Replay produces identical case reports. Stage failures give a redacted manual-review result and bounded read-only retries. Foundry execution is unverified and remains disabled. The elapsed-time budget is checked between synchronous local operations and after they return.
+
+## P4 — Local approval safety
+
+46 tests passed, with 98.44% combined coverage. API integration tests verified deny-by-default configuration, role separation, an eligibility check, approval before simulation, denial terminality, de-duplication and correct audit actors. Changes are transactional in SQLite. Simulation writes only the local state and audit record. Local role tokens are demo authentication. Enterprise identity, multi-tenant authorization and production audit custody remain deployment requirements.

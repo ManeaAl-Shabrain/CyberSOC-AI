@@ -1,5 +1,5 @@
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, closing
 from hmac import compare_digest
 from os import getenv
 from typing import Annotated
@@ -9,17 +9,21 @@ from pydantic import ValidationError
 from starlette.concurrency import run_in_threadpool
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from apps.api.approvals import create_approval_router
+from cybersoc.repositories.approvals import ApprovalRepository
 from cybersoc.repositories.events import DuplicateEvent, EventRepository
 from cybersoc.schemas.events import SecurityEvent
 
 MAX_EVENT_BYTES = 16_384
 
 
-def create_app(database: str = ":memory:", api_token: str | None = None) -> FastAPI:
+def create_app(database: str = ":memory:", api_token: str | None = None,
+               analyst_token: str | None = None, reviewer_token: str | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
-        with EventRepository(database) as repository:
+        with EventRepository(database) as repository, closing(ApprovalRepository(database)) as approvals:
             application.state.events = repository
+            application.state.approvals = approvals
             yield
 
     app = FastAPI(title="CyberSOC AI", version="0.1.0", lifespan=lifespan)
@@ -67,7 +71,11 @@ def create_app(database: str = ":memory:", api_token: str | None = None) -> Fast
             raise HTTPException(404, "not found")
         return result
 
+    app.include_router(create_approval_router(analyst_token, reviewer_token))
     return app
 
 
-app = create_app(database=getenv("CYBERSOC_DB", ":memory:"), api_token=getenv("CYBERSOC_API_TOKEN"))
+app = create_app(
+    database=getenv("CYBERSOC_DB", ":memory:"), api_token=getenv("CYBERSOC_API_TOKEN"),
+    analyst_token=getenv("CYBERSOC_ANALYST_TOKEN"), reviewer_token=getenv("CYBERSOC_REVIEWER_TOKEN"),
+)
