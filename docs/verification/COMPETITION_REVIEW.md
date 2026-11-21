@@ -25,3 +25,7 @@ Ruff and 30 pytest cases passed on Python 3.11.18. The eight v1 synthetic cases 
 ## P5 — Tracing and evaluation
 
 48 tests passed with 98.43% coverage. The checked-in JSON baseline records eight labeled synthetic cases, 100% severity agreement, precision, recall and grounded-link rate. Grounded-link scoring verifies source IDs and evidence digests. It is a proxy for factual grounding and does not replace analyst review. No model tokens are used. A negative control forces incorrect severity and verifies a failed evaluation exit code. The workflow definition runs this check in CI.
+
+## P6 — Dashboard and install
+
+50 tests passed, with 98.51% combined coverage. The integration load smoke test replayed 64 cases via eight worker threads and recorded 64 distinct trace IDs. A Chromium walkthrough verified desktop and 375-pixel mobile layouts, replay, timeline, trace expansion, evaluation, analyst and reviewer roles, simulation and audit. A clean Python 3.11 environment installed the built wheel and found its static UI and packaged fixtures. Docker hardware/runtime and Azure resources were unavailable, so container execution and cloud deployment are unverified.

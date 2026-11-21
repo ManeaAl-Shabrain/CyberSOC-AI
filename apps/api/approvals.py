@@ -48,6 +48,10 @@ def create_approval_router(analyst_token: str | None, reviewer_token: str | None
     def list_approvals(request: Request, identity: Annotated[Role, Depends(role)]):
         return request.app.state.approvals.list_records(identity if identity == Role.analyst else None)
 
+    @router.get("/session")
+    def session(identity: Annotated[Role, Depends(role)]):
+        return {"role": identity}
+
     @router.get("/audit")
     def list_audit(request: Request, _: Annotated[Role, Depends(reviewer)]):
         return request.app.state.approvals.audit()

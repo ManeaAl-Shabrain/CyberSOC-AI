@@ -10,6 +10,8 @@ from starlette.concurrency import run_in_threadpool
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from apps.api.approvals import create_approval_router
+from apps.api.demo import router as demo_router
+from apps.api.demo import static
 from cybersoc.repositories.approvals import ApprovalRepository
 from cybersoc.repositories.events import DuplicateEvent, EventRepository
 from cybersoc.schemas.events import SecurityEvent
@@ -71,6 +73,8 @@ def create_app(database: str = ":memory:", api_token: str | None = None,
             raise HTTPException(404, "not found")
         return result
 
+    app.include_router(demo_router)
+    app.mount("/assets", static, name="assets")
     app.include_router(create_approval_router(analyst_token, reviewer_token))
     return app
 
