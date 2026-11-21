@@ -1,7 +1,10 @@
-from datetime import datetime, timezone
+import json
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any
-from pydantic import BaseModel, Field, field_validator, model_validator
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field, JsonValue, field_validator, model_validator
+
 
 class Severity(str, Enum):
     low = "low"
@@ -10,18 +13,27 @@ class Severity(str, Enum):
     critical = "critical"
 
 class SecurityEvent(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     event_id: str = Field(min_length=1, max_length=100)
     timestamp: datetime
     source: str = Field(min_length=1, max_length=100)
     event_type: str = Field(min_length=1, max_length=100)
     asset_id: str = Field(min_length=1, max_length=100)
-    raw_data: dict[str, Any] = Field(default_factory=dict)
-    simulation: bool = True
+    raw_data: dict[str, JsonValue] = Field(default_factory=dict)
+    simulation: Literal[True] = True
+
+    @field_validator("raw_data")
+    @classmethod
+    def bounded_json(cls, value: dict[str, JsonValue]) -> dict[str, JsonValue]:
+        if len(json.dumps(value, ensure_ascii=True, allow_nan=False).encode()) > 12_000:
+            raise ValueError("raw_data exceeds size limit")
+        return value
 
     @field_validator("timestamp")
     @classmethod
     def utc_only(cls, value: datetime) -> datetime:
-        if value.tzinfo is None or value.utcoffset() != timezone.utc.utcoffset(value):
+        if value.tzinfo is None or value.utcoffset() != UTC.utcoffset(value):
             raise ValueError("timestamp must be UTC")
         return value
 

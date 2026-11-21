@@ -1,5 +1,6 @@
 from typing import Protocol
 
+
 class AIProvider(Protocol):
     def analyze(self, event: dict) -> dict: ...
 

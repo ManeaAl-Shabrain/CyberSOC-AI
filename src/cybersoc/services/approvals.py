@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
+
 class ActionStatus(str, Enum):
     proposed = "proposed"
     awaiting_approval = "awaiting_approval"

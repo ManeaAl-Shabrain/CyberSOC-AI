@@ -1,9 +1,11 @@
 import pytest
 from pydantic import ValidationError
-from cybersoc.schemas.events import AgentFinding, SecurityEvent
-from cybersoc.services.approvals import ProposedAction, ActionStatus
-from cybersoc.providers.base import MockProvider, FoundryProvider
+
+from cybersoc.providers.base import FoundryProvider, MockProvider
 from cybersoc.repositories.events import EventRepository
+from cybersoc.schemas.events import AgentFinding, SecurityEvent
+from cybersoc.services.approvals import ActionStatus, ProposedAction
+
 
 @pytest.mark.parametrize("status", [ActionStatus.approved, ActionStatus.rejected, ActionStatus.simulated_execution])
 def test_no_direct_privileged_transition(status):
@@ -37,9 +39,9 @@ def test_foundry_fail_closed():
         FoundryProvider().analyze({})
 
 def test_storage_immutable():
-    repo = EventRepository()
     event = SecurityEvent(event_id="1", timestamp="2026-11-20T10:30:00Z", source="x", event_type="y", asset_id="z")
-    digest = repo.save(event)
-    assert repo.get("1")["sha256"] == digest
-    with pytest.raises(ValueError):
-        repo.save(event)
+    with EventRepository() as repository:
+        digest = repository.save(event)
+        assert repository.get("1")["sha256"] == digest
+        with pytest.raises(ValueError):
+            repository.save(event)
