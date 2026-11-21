@@ -13,3 +13,4 @@ jobs:
       - run: python -m pip install -e '.[dev]'
       - run: ruff check .
       - run: pytest --cov=cybersoc --cov=apps --cov-report=term-missing --cov-fail-under=80
+      - run: python -m cybersoc.evaluation

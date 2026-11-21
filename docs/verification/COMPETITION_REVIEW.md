@@ -21,3 +21,7 @@ Ruff and 30 pytest cases passed on Python 3.11.18. The eight v1 synthetic cases 
 ## P4 — Local approval safety
 
 46 tests passed, with 98.44% combined coverage. API integration tests verified deny-by-default configuration, role separation, an eligibility check, approval before simulation, denial terminality, de-duplication and correct audit actors. Changes are transactional in SQLite. Simulation writes only the local state and audit record. Local role tokens are demo authentication. Enterprise identity, multi-tenant authorization and production audit custody remain deployment requirements.
+
+## P5 — Tracing and evaluation
+
+48 tests passed with 98.43% coverage. The checked-in JSON baseline records eight labeled synthetic cases, 100% severity agreement, precision, recall and grounded-link rate. Grounded-link scoring verifies source IDs and evidence digests. It is a proxy for factual grounding and does not replace analyst review. No model tokens are used. A negative control forces incorrect severity and verifies a failed evaluation exit code. The workflow definition runs this check in CI.

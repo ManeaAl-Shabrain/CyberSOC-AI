@@ -1,0 +1,110 @@
+{
+  "dataset_version": "1.0",
+  "scope": "offline-synthetic",
+  "cases": [
+    {
+      "scenario": "privileged-sign-in",
+      "expected": "high",
+      "observed": "high",
+      "evidence_integrity": true,
+      "grounded_links": true,
+      "task_adherence": true,
+      "tools_allowed": true,
+      "redaction": true,
+      "duration_ms": 0.4139129997611235,
+      "passed": true
+    },
+    {
+      "scenario": "routine-sign-in",
+      "expected": "low",
+      "observed": "low",
+      "evidence_integrity": true,
+      "grounded_links": true,
+      "task_adherence": true,
+      "tools_allowed": true,
+      "redaction": true,
+      "duration_ms": 0.13379899985466182,
+      "passed": true
+    },
+    {
+      "scenario": "nonprivileged-sign-in",
+      "expected": "medium",
+      "observed": "medium",
+      "evidence_integrity": true,
+      "grounded_links": true,
+      "task_adherence": true,
+      "tools_allowed": true,
+      "redaction": true,
+      "duration_ms": 0.11346099984166358,
+      "passed": true
+    },
+    {
+      "scenario": "approved-maintenance",
+      "expected": "medium",
+      "observed": "medium",
+      "evidence_integrity": true,
+      "grounded_links": true,
+      "task_adherence": true,
+      "tools_allowed": true,
+      "redaction": true,
+      "duration_ms": 0.11747799999284325,
+      "passed": true
+    },
+    {
+      "scenario": "ambiguous-sign-in",
+      "expected": "medium",
+      "observed": "medium",
+      "evidence_integrity": true,
+      "grounded_links": true,
+      "task_adherence": true,
+      "tools_allowed": true,
+      "redaction": true,
+      "duration_ms": 0.13812700001381018,
+      "passed": true
+    },
+    {
+      "scenario": "untrusted-log",
+      "expected": "high",
+      "observed": "high",
+      "evidence_integrity": true,
+      "grounded_links": true,
+      "task_adherence": true,
+      "tools_allowed": true,
+      "redaction": true,
+      "duration_ms": 0.12746100003369065,
+      "passed": true
+    },
+    {
+      "scenario": "expired-window",
+      "expected": "low",
+      "observed": "low",
+      "evidence_integrity": true,
+      "grounded_links": true,
+      "task_adherence": true,
+      "tools_allowed": true,
+      "redaction": true,
+      "duration_ms": 0.11215799997899012,
+      "passed": true
+    },
+    {
+      "scenario": "confirmed-mfa-fraud",
+      "expected": "critical",
+      "observed": "critical",
+      "evidence_integrity": true,
+      "grounded_links": true,
+      "task_adherence": true,
+      "tools_allowed": true,
+      "redaction": true,
+      "duration_ms": 0.13361100002384774,
+      "passed": true
+    }
+  ],
+  "severity_agreement": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "grounded_link_rate": 1.0,
+  "p50_ms": 0.12746100003369065,
+  "p95_ms": 0.4139129997611235,
+  "model_tokens": 0,
+  "passed": true
+}
