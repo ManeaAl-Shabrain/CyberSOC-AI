@@ -5,6 +5,8 @@
 
 > Implementation update: the offline Competition Edition demo implements all six deterministic roles. See [local phase evidence](verification/COMPETITION_REVIEW.md) for verified results and remaining external gates. The entries below preserve the original plan and its planned targets.
 
+> Current competition baseline, 2026-11-22. Use GPT-4.1 mini with the [Foundry operations and verification plan](verification/FOUNDRY_GPT41_ROLLOUT.md). The [Luna rollout ledger](verification/FOUNDRY_LUNA_ROLLOUT.md) records the previous quota work and the pending model switch.
+
 ## 1. Source inventory and precedence
 
 Reviewed: seven `agent-architect-*-transcript.txt` lesson transcripts; user-provided screenshots of Lesson 8 Final Activity (steps 1–3 and submission screen); previous `CyberSOC-AI-Phase1.zip` and extracted repository including README, architecture, security baseline, review, API, schema, provider, repository, approval tests and CI workflow; Azure for Students and Foundry screenshots; GitHub repository URL provided by user. The [Microsoft FrontierWeekHack lab](https://github.com/microsoft/FrontierWeekHack) provides a reference implementation for the build, monitor, evaluate, and orchestrate exercises. The [project repository](https://github.com/ManeaAl-Shabrain/CyberSOC-AI) is the destination for this plan and code. No independent official judging rubric or deadline has been supplied. The screenshots show a three-minute video upload limit (150 MB, MP4/MOV/WebM) and a Word/PDF document requirement. Lesson 8 Step 3 lists both artifacts. The camera UI separately describes attaching a document in optional terms. Prepare both artifacts to satisfy the written assignment.
