@@ -12,6 +12,8 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from apps.api.approvals import create_approval_router
 from apps.api.demo import router as demo_router
 from apps.api.demo import static
+from apps.api.foundry import create_foundry_router
+from cybersoc.foundry_demo import FoundrySettings
 from cybersoc.repositories.approvals import ApprovalRepository
 from cybersoc.repositories.events import DuplicateEvent, EventRepository
 from cybersoc.schemas.events import SecurityEvent
@@ -20,7 +22,8 @@ MAX_EVENT_BYTES = 16_384
 
 
 def create_app(database: str = ":memory:", api_token: str | None = None,
-               analyst_token: str | None = None, reviewer_token: str | None = None) -> FastAPI:
+               analyst_token: str | None = None, reviewer_token: str | None = None,
+               foundry: FoundrySettings | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         with EventRepository(database) as repository, closing(ApprovalRepository(database)) as approvals:
@@ -74,12 +77,15 @@ def create_app(database: str = ":memory:", api_token: str | None = None,
         return result
 
     app.include_router(demo_router)
+    app.include_router(create_foundry_router(foundry))
     app.mount("/assets", static, name="assets")
     app.include_router(create_approval_router(analyst_token, reviewer_token))
     return app
 
 
+foundry_endpoint = getenv("FOUNDRY_PROJECT_ENDPOINT")
 app = create_app(
     database=getenv("CYBERSOC_DB", ":memory:"), api_token=getenv("CYBERSOC_API_TOKEN"),
     analyst_token=getenv("CYBERSOC_ANALYST_TOKEN"), reviewer_token=getenv("CYBERSOC_REVIEWER_TOKEN"),
+    foundry=FoundrySettings.from_environment(foundry_endpoint) if foundry_endpoint else None,
 )

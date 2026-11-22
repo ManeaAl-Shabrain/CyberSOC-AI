@@ -1,6 +1,6 @@
 # CyberSOC AI — Competition Edition
 
-A local, synthetic-data SOC workspace that replays suspicious sign-ins, correlates evidence, proposes analyst next steps, and records human decisions for simulated actions. The six agents are deterministic specialists. The Foundry provider is disabled until cloud access and runtime behavior can be verified.
+A local, synthetic-data SOC workspace that replays suspicious sign-ins, correlates evidence, proposes analyst next steps, and records human decisions for simulated actions. The offline replay includes six deterministic specialists. The optional Foundry replay uses two GPT-4.1 mini agents for triage and investigation for the same synthetic scenarios.
 
 ## Start the demo
 
@@ -51,3 +51,38 @@ Pass the two approval variables with `-e CYBERSOC_ANALYST_TOKEN -e CYBERSOC_REVI
 - [Security baseline](docs/security/SECURITY_BASELINE.md)
 - [Phase verification](docs/verification/COMPETITION_REVIEW.md)
 - [Measured evaluation baseline](docs/verification/evaluation-baseline.json)
+
+## Replay with Microsoft Foundry
+
+The Competition Edition uses the existing `gpt-4.1-mini` deployment. Attach the
+two existing prompt agents by their versions or create versions in a fresh
+project with `python -m cybersoc.foundry_demo configure`. That command prints
+the versions it created. Both agents must use the configured deployment and have
+empty tool lists. See the [competition operations plan](docs/verification/FOUNDRY_GPT41_ROLLOUT.md)
+for stage ownership, rehearsal steps and acceptance criteria.
+
+From PowerShell at the repository root, with your virtual environment active:
+
+```powershell
+az login
+python -m pip install -e '.[foundry]'
+$env:FOUNDRY_PROJECT_ENDPOINT = '<Foundry project endpoint ending in /api/projects/<project>>'
+$env:FOUNDRY_DEPLOYMENT = 'gpt-4.1-mini'
+$env:FOUNDRY_TRIAGE_VERSION = '2'
+$env:FOUNDRY_INVESTIGATION_VERSION = '2'
+$env:FOUNDRY_STAGE_DELAY_SECONDS = '61'
+python -m cybersoc.foundry_demo run --scenario privileged-sign-in
+python -m uvicorn apps.api.main:app --host 127.0.0.1 --port 8000
+```
+
+The example version numbers apply to the existing `cybersoc-ai` project. Use
+your project's actual version numbers. The optional pause is for the 1,000 TPM
+competition deployment. Open the dashboard and select **Run with gpt-4.1-mini**.
+The Foundry panel shows classification, limitations, citations, stage duration
+(including any configured pause in investigation) and the trace ID. Review any recommendation before taking action.
+
+Run `python -m cybersoc.foundry_demo evaluate` for all eight fixtures. With
+61-second pacing, the live suite takes about 15 minutes plus response times.
+The routine uses true model calls and consumes tokens. Use the
+[Foundry agent quickstart](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/prompt-agent)
+for credential and project setup.

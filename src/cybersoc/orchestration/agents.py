@@ -24,6 +24,7 @@ class Investigation:
     findings: list[AgentFinding]
     timeline: list[TimelineEntry]
     limitations: list[str]
+    advisory_next_step: str | None = None
 
 
 def intake(scenario: Scenario) -> list[SecurityEvent]:
@@ -68,9 +69,12 @@ def investigate(events: list[SecurityEvent], cluster: tuple[SecurityEvent, ...],
         limitations.append("Change records are unavailable. Ask an analyst to verify the change window.")
     if any(event.raw_data.get("note") for event in events):
         limitations.append("Free-text log content is excluded from findings and tool inputs.")
-    timeline = [TimelineEntry(timestamp=event.timestamp, event_type=event.event_type, evidence_id=refs([event])[0])
-                for event in sorted(events, key=lambda item: (item.timestamp, item.event_id))]
-    return Investigation(findings, timeline, limitations)
+    return Investigation(findings, build_timeline(events), limitations)
+
+
+def build_timeline(events: list[SecurityEvent]) -> list[TimelineEntry]:
+    return [TimelineEntry(timestamp=event.timestamp, event_type=event.event_type, evidence_id=refs([event])[0])
+            for event in sorted(events, key=lambda item: (item.timestamp, item.event_id))]
 
 
 def report(case_id: str, scenario: Scenario, events: list[SecurityEvent], context: Enrichment,
@@ -78,6 +82,8 @@ def report(case_id: str, scenario: Scenario, events: list[SecurityEvent], contex
     next_step = ("Escalate to Tier 2 and verify with the account owner via an approved channel."
                  if severity in {Severity.high, Severity.critical}
                  else "Review the supplied evidence and record the analyst disposition.")
+    if investigation.advisory_next_step:
+        next_step = f"Model suggestion for analyst review: {investigation.advisory_next_step}"
     return CaseReport(
         case_id=case_id, scenario=scenario.id, severity=severity,
         summary=f"{scenario.title}. Sent for analyst review.",
