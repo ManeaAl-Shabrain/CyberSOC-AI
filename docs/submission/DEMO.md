@@ -2,8 +2,7 @@
 
 ## Recording
 
-Use the provided MP4 with English synthetic narration, or record this walkthrough
-in your own voice. Show the local synthetic workspace and keep the password
+Record this walkthrough in your own voice. Show the synthetic workspace and keep the password
 field and launch terminal clear of credentials. Lesson 8 accepts MP4, MOV or
 WebM at up to three minutes and 150 MB.
 
@@ -13,8 +12,9 @@ WebM at up to three minutes and 150 MB.
    triage, investigation and reporting exchange.
 4. Run the evaluation. Describe the eight-case synthetic evidence and its limits.
 5. Show the analyst request, independent reviewer approval, and local simulation audit.
-6. Explain the production plan: verified Foundry access, private staging, evaluation,
-   shadow mode and rollback. State that the demonstration runs locally.
+6. Show the GPT-4.1 mini advisory result if the Foundry run completed. Explain the
+   separate reviewer decision, private staging, shadow mode and rollback. Use the
+   [competition operations plan](../verification/FOUNDRY_GPT41_ROLLOUT.md) to rehearse.
 
 ## Review checklist
 
