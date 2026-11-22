@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from dataclasses import dataclass
 from time import perf_counter
 from typing import TypeVar
 from uuid import uuid4
@@ -6,6 +7,7 @@ from uuid import uuid4
 from cybersoc.orchestration import agents
 from cybersoc.scenarios import Scenario
 from cybersoc.schemas.cases import AgentTrace, CaseRun
+from cybersoc.schemas.events import SecurityEvent, Severity
 
 
 class TransientToolError(RuntimeError):
@@ -19,7 +21,13 @@ class StageFailure(RuntimeError):
 Result = TypeVar("Result")
 
 
-def run_case(scenario: Scenario, *, budget_ms: float = 2_000) -> CaseRun:
+@dataclass(frozen=True)
+class AdvisoryStages:
+    triage: Callable[[list[SecurityEvent], tuple[SecurityEvent, ...], agents.Enrichment], tuple[Severity, list[str]]]
+    investigate: Callable[[list[SecurityEvent]], agents.Investigation]
+
+
+def run_case(scenario: Scenario, *, budget_ms: float = 2_000, advisory: AdvisoryStages | None = None) -> CaseRun:
     case_id = f"case:{scenario.id}"
     trace_id = uuid4().hex
     traces: list[AgentTrace] = []
@@ -66,11 +74,19 @@ def run_case(scenario: Scenario, *, budget_ms: float = 2_000) -> CaseRun:
         context_ids = agents.refs(context.records)
         cluster = stage("detection", ["sign-in-correlation"], event_ids, lambda: agents.detect(events), agents.refs)
         signal_ids = agents.refs(cluster)
-        severity = stage("triage", ["severity-rubric"], [*signal_ids, *context_ids],
-                         lambda: agents.triage(cluster, context), lambda _: [*signal_ids, *context_ids])
-        findings = stage("investigation", ["timeline-builder"], [*event_ids, *context_ids],
-                         lambda: agents.investigate(events, cluster, context),
-                         lambda result: sorted({ref for finding in result.findings for ref in finding.evidence_ids}))
+        all_ids = [*event_ids, *context_ids]
+        local_inputs = [*signal_ids, *context_ids]
+        severity, _ = stage(
+            "triage", ["foundry", "evidence-validator"] if advisory else ["severity-rubric"],
+            all_ids if advisory else local_inputs,
+            lambda: advisory.triage(events, cluster, context) if advisory else (agents.triage(cluster, context), local_inputs),
+            lambda decision: decision[1],
+        )
+        findings = stage(
+            "investigation", ["foundry", "timeline-builder"] if advisory else ["timeline-builder"], all_ids,
+            lambda: advisory.investigate(events) if advisory else agents.investigate(events, cluster, context),
+            lambda result: sorted({ref for finding in result.findings for ref in finding.evidence_ids}),
+        )
         result = stage("reporting", ["approved-playbook", "case-validator"], [*event_ids, *context_ids],
                        lambda: agents.report(case_id, scenario, events, context, severity, findings),
                        lambda report: [item.evidence_id for item in report.evidence])
