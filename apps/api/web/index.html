@@ -19,10 +19,11 @@
       <a href="#case">Case overview</a>
       <a href="#timeline-section">Timeline &amp; evidence</a>
       <a href="#trace-section">Agent traces</a>
+      <a href="#foundry-section">Foundry replay</a>
       <a href="#evaluation-section">Evaluation</a>
       <a href="#approval-section">Approvals</a>
     </nav>
-    <div class="mode"><span aria-hidden="true"></span> Synthetic data · Offline</div>
+    <div class="mode"><span aria-hidden="true"></span> Synthetic data</div>
   </aside>
   <main id="workspace">
     <header class="workspace-header">
@@ -67,6 +68,14 @@
       <h2 id="traces-title">Agent traces</h2>
       <p id="trace-id" class="meta"></p>
       <div id="traces" class="stack"></div>
+    </section>
+    <section class="panel" id="foundry-section" aria-labelledby="foundry-title">
+      <div class="section-head">
+        <h2 id="foundry-title">Microsoft Foundry replay</h2>
+        <button class="secondary" id="foundry-run" type="button" disabled>Run with Foundry</button>
+      </div>
+      <p id="foundry-status" role="status">Checking Foundry configuration…</p>
+      <div id="foundry-results" class="stack"></div>
     </section>
     <section class="panel" id="evaluation-section" aria-labelledby="evaluation-title">
       <div class="section-head"><h2 id="evaluation-title">Synthetic evaluation</h2><button class="secondary" id="evaluate" type="button">Run evaluation</button></div>

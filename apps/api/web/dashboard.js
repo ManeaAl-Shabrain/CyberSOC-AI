@@ -9,6 +9,12 @@ const approvalStatus = byId("approval-status");
 let activeCase = null;
 let busy = false;
 let approvalGeneration = 0;
+const foundryButton = byId("foundry-run");
+const foundryStatus = byId("foundry-status");
+const foundryResults = byId("foundry-results");
+let foundryConfigured = false;
+let foundryBusy = false;
+let foundryDelay = 0;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -95,6 +101,63 @@ async function replay() {
   }
 }
 
+async function updateFoundryStatus() {
+  try {
+    const status = await request("/demo/foundry/status");
+    foundryConfigured = status.configured;
+    foundryDelay = status.stage_delay_seconds;
+    if (foundryConfigured) foundryButton.textContent = "Run with " + status.deployment;
+    foundryStatus.textContent = foundryConfigured
+      ? "Ready to request a synthetic replay for the selected scenario."
+      : "Foundry is not configured. Local replay is available.";
+    foundryButton.disabled = !foundryConfigured || !scenario.value;
+  } catch (error) {
+    foundryStatus.textContent = error.message;
+  }
+}
+
+async function replayOnFoundry() {
+  const selection = scenario.value;
+  const title = scenario.selectedOptions[0].textContent;
+  foundryBusy = true;
+  foundryButton.disabled = true;
+  foundryResults.replaceChildren();
+  foundryStatus.textContent = "Running Foundry agents for " + title + "…" +
+    (foundryDelay ? " Includes a " + foundryDelay + " s pause between agents." : "");
+  try {
+    const result = await request("/demo/foundry/runs/" + encodeURIComponent(selection), {
+      method: "POST",
+      headers: { "X-CyberSOC-Demo": "synthetic-only" },
+    });
+    const stages = result.stages.map((stage) => row(
+      stage.agent + " · " + stage.status + " · " + stage.duration_ms.toFixed(2) + " ms",
+      stage.error_class || stage.output_evidence_ids.join(" · ")));
+    if (result.status === "manual_review") {
+      foundryResults.replaceChildren(...stages);
+      foundryStatus.textContent = title + " · Workflow stopped · Manual review required · Trace " + result.trace_id;
+      return;
+    }
+    const report = result.report;
+    const evidence = element("details", "");
+    evidence.append(element("summary", "Case timeline and evidence"),
+      ...report.timeline.map((item) => row(item.event_type, item.timestamp + " · " + item.evidence_id)));
+    foundryResults.replaceChildren(
+      row("Triage · " + result.triage.severity, result.triage.reason),
+      row("Investigation", result.investigation.summary),
+      row("Analyst next step", result.investigation.next_step),
+      row("Limitations", result.investigation.limitations.join(" · ")),
+      evidence,
+      ...stages,
+    );
+    foundryStatus.textContent = title + " · " + result.deployment + " · Analyst review required · Trace " + result.trace_id;
+  } catch (error) {
+    foundryStatus.textContent = error.message;
+  } finally {
+    foundryBusy = false;
+    foundryButton.disabled = !foundryConfigured || !scenario.value;
+  }
+}
+
 function authorized(method = "GET") {
   return { method, headers: { Authorization: "Bearer " + tokenField.value.trim() } };
 }
@@ -158,9 +221,14 @@ async function evaluate() {
 }
 
 runButton.addEventListener("click", replay);
+foundryButton.addEventListener("click", replayOnFoundry);
 scenario.addEventListener("change", () => {
   activeCase = null;
   updateApprovalButton();
+  if (!foundryBusy && foundryConfigured) {
+    foundryResults.replaceChildren();
+    foundryStatus.textContent = "Ready to request a synthetic replay for the selected scenario.";
+  }
 });
 tokenField.addEventListener("input", () => {
   approvalGeneration += 1;
@@ -181,7 +249,7 @@ async function initialize() {
       option.value = item.id;
       scenario.append(option);
     }
-    await replay();
+    await Promise.all([replay(), updateFoundryStatus()]);
   } catch (error) {
     byId("status").textContent = error.message;
   }
